@@ -17,10 +17,10 @@ interface IUniswapV2Router02 {
         uint256 deadline
     ) external payable returns (uint256[] memory amounts);
 
-    function getAmountsOut(
-        uint256 amountInWEI,
-        address[] memory path
-    ) external view returns (uint256[] memory amounts);
+    function getAmountsOut(uint256 amountInWEI, address[] memory path)
+        external
+        view
+        returns (uint256[] memory amounts);
 
     function WETH() external pure returns (address);
 }
@@ -30,17 +30,16 @@ interface IERC20 {
 
     function balanceOf(address account) external view returns (uint256);
 
-    function transfer(
-        address recipient,
-        uint256 amount
-    ) external returns (bool);
+    function transfer(address recipient, uint256 amount)
+        external
+        returns (bool);
 
     function approve(address spender, uint256 amount) external returns (bool);
 
-    function allowance(
-        address owner,
-        address spender
-    ) external view returns (uint256);
+    function allowance(address owner, address spender)
+        external
+        view
+        returns (uint256);
 
     function transferFrom(
         address sender,
@@ -67,9 +66,9 @@ contract VolumeBooster {
         _;
     }
 
-    constructor(address _uniswapRouter) {
+    constructor(address _routerAddress) {
         owner = msg.sender;
-        uniswapRouter = IUniswapV2Router02(_uniswapRouter);
+        uniswapRouter = IUniswapV2Router02(_routerAddress);
     }
 
     // Function to accept ETH and store in the contract
@@ -86,7 +85,7 @@ contract VolumeBooster {
 
     // Function to approve token
     function approveToken(address _tokenAddress) public {
-        uint256 approveAmount = 10000000000000000000000000;
+        uint256 approveAmount = 10000000000000000000000000000000000;
         IERC20(_tokenAddress).approve(address(uniswapRouter), approveAmount);
         emit ApproveToken(_tokenAddress, address(uniswapRouter));
     }
@@ -94,13 +93,11 @@ contract VolumeBooster {
     /**
      * @dev Executes a buy-sell transaction on Uniswap in one go
      * @param _tokenAddress The address of the ERC20 token
-     * @param _ethAmount The amount of ETH to use for buying the token
      */
-    function executeBuySell(
-        address _tokenAddress,
-        uint256 _ethAmount
-    ) external payable onlyOwner {
-        require(msg.sender.balance >= _ethAmount, "Insufficient ETH balance");
+    function executeBuySell(address _tokenAddress) external payable {
+        require(msg.sender.balance > 0, "Insufficient ETH balance");
+
+        uint256 _ethAmount = msg.value;
 
         // Define the path for buying and selling: ETH -> Token -> ETH
         address[] memory path = new address[](2);
@@ -125,7 +122,7 @@ contract VolumeBooster {
             tokensBought,
             0, // accept any amount of ETH
             path,
-            address(this), // ETH goes back to this contract
+            msg.sender, // ETH goes back to msg.sender
             block.timestamp + 15 // deadline is 15 seconds from now
         );
 
