@@ -43,4 +43,4 @@ This is built with **anti-MEV** (Maximal Extractable Value) functionality, robus
 For any questions or to get started with the Volume Boosting Bot, reach out to us:
 
 - **Email**: [sakelejames@gmail.com](mailto:sakelejames@gmail.com)
-- **Telegram**: [@PtcBink](https://t.me/ptc-bink)
+- **Telegram**: [@PtcBink](https://t.me/ptcbink)
